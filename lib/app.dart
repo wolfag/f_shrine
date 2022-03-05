@@ -1,20 +1,47 @@
+import 'package:f_shrine/backdrop.dart';
+import 'package:f_shrine/category_menu_page.dart';
 import 'package:f_shrine/colors.dart';
 import 'package:f_shrine/home.dart';
 import 'package:f_shrine/login.dart';
+import 'package:f_shrine/model/product.dart';
 import 'package:f_shrine/supplemental/cut_corners_border.dart';
 import 'package:flutter/material.dart';
 
 final ThemeData _kShrineTheme = _buildShrineTheme();
 
-class ShrineApp extends StatelessWidget {
+class ShrineApp extends StatefulWidget {
   const ShrineApp({Key? key}) : super(key: key);
+
+  @override
+  State<ShrineApp> createState() => _ShrineAppState();
+}
+
+class _ShrineAppState extends State<ShrineApp> {
+  Category _currentCategory = Category.all;
+
+  void _onCategoryTap(Category category) {
+    setState(() {
+      _currentCategory = category;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Shrine',
       initialRoute: LoginPage.routeName,
-      home: const HomePage(),
+      home: Backdrop(
+        currentCategory: Category.all,
+        frontLayer: HomePage(
+          category: _currentCategory,
+        ),
+        backLayer: CategoryMenuPage(
+          currentCategory: _currentCategory,
+          onCategoryTap: _onCategoryTap,
+        ),
+        frontTitle: Text('SHRINE'),
+        backTitle: Text('Menu'),
+      ),
       onGenerateRoute: _getRoute,
       debugShowCheckedModeBanner: false,
       theme: _kShrineTheme,
